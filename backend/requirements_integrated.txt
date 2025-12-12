@@ -1,0 +1,6 @@
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.10.3
+requests==2.32.3
+python-dotenv==1.0.1
+snowleopard>=0.1.0

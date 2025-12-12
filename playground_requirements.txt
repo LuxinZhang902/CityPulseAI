@@ -1,0 +1,3 @@
+# SnowLeopard Playground requirements
+snowleopard
+python-dotenv
