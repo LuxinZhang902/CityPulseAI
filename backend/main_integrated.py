@@ -16,6 +16,7 @@ dotenv.load_dotenv()
 # Import our integrated agent
 from agent.crisis_agent_integrated import CityPulseAgent
 from services.pdf_generator import pdf_generator
+from services.realtime_sync import RealtimeDataSync
 
 app = FastAPI(
     title="CityPulse AI - Integrated",
@@ -36,7 +37,22 @@ app.add_middleware(
 DB_PATH = Path(__file__).parent.parent / "database" / "citypulse.db"
 SNOWLEOPARD_API_KEY = os.getenv("SNOWLEOPARD_API_KEY")
 USE_PLAYGROUND = os.getenv("USE_PLAYGROUND", "true").lower() == "true"
-DATAFILE_ID = os.getenv("SNOWLEOPARD_DATAFILE_ID", "b608c4da75b2402a9c4a7a7138ef692f")
+DATAFILE_ID = os.getenv("SNOWLEOPARD_DATAFILE_ID", "793f36afcd494309963477d7e7f4075b")
+SYNC_ON_STARTUP = os.getenv("SYNC_REALTIME_DATA", "false").lower() == "true"
+
+# Sync real-time data once at startup if enabled
+if SYNC_ON_STARTUP:
+    print("\n" + "="*60)
+    print("🌐 Syncing Real-Time Data from SF Open Data APIs...")
+    print("="*60)
+    syncer = RealtimeDataSync(DB_PATH)
+    try:
+        syncer.sync_all()
+        print("✅ Real-time data sync complete!")
+    except Exception as e:
+        print(f"⚠️  Real-time sync failed: {e}")
+        print("📊 Continuing with existing database data...")
+    print("="*60 + "\n")
 
 agent = CityPulseAgent(
     db_path=str(DB_PATH),

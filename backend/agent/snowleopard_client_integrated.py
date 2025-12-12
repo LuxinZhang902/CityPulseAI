@@ -16,7 +16,7 @@ class SnowLeopardClient:
     def __init__(self, api_key: Optional[str] = None, use_playground: bool = True, datafile_id: Optional[str] = None):
         self.api_key = api_key or os.getenv("SNOWLEOPARD_API_KEY")
         self.use_playground = use_playground
-        self.datafile_id = datafile_id or os.getenv("SNOWLEOPARD_DATAFILE_ID", "b608c4da75b2402a9c4a7a7138ef692f")
+        self.datafile_id = datafile_id or os.getenv("SNOWLEOPARD_DATAFILE_ID", "793f36afcd494309963477d7e7f4075b")
         
         # Initialize clients
         if self.use_playground:

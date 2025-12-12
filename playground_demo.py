@@ -25,7 +25,7 @@ def main():
     client = SnowLeopardPlaygroundClient(api_key=api_key)
     
     # Your uploaded datafile ID
-    datafile_id = "b608c4da75b2402a9c4a7a7138ef692f"
+    datafile_id = "793f36afcd494309963477d7e7f4075b"
     
     print(f"📊 Using datafile_id: {datafile_id}")
     print("=" * 60)
@@ -76,7 +76,7 @@ def interactive_mode():
         return
     
     client = SnowLeopardPlaygroundClient(api_key=api_key)
-    datafile_id = "b608c4da75b2402a9c4a7a7138ef692f"
+    datafile_id = "793f36afcd494309963477d7e7f4075b"
     
     print("🎯 Interactive CityPulse AI Query Mode")
     print("Type 'quit' to exit")

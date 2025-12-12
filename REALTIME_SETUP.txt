@@ -1,0 +1,198 @@
+================================================================================
+🌐 REAL-TIME DATA INTEGRATION - SETUP GUIDE
+================================================================================
+
+CityPulse AI now supports real-time data from SF Open Data APIs!
+
+--------------------------------------------------------------------------------
+📊 DATA SOURCES
+--------------------------------------------------------------------------------
+
+1. SF Police Incidents (Real-Time)
+   - URL: https://data.sfgov.org/Public-Safety/Police-Department-Incident-Reports
+   - Updates: Real-time 911 CAD data
+   - Last 24 hours synced
+
+2. SF Fire/EMS Calls (Near Real-Time)
+   - URL: https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service
+   - Updates: Near real-time
+   - Last 24 hours synced
+
+3. SF 311 Cases (Daily)
+   - URL: https://data.sfgov.org/City-Infrastructure/311-Cases
+   - Updates: Daily
+   - Last 7 days synced
+
+4. USGS Earthquakes (Real-Time)
+   - URL: https://earthquake.usgs.gov/fdsnws/event/1/
+   - Updates: Real-time
+   - Last 24 hours, 100km radius from SF
+
+--------------------------------------------------------------------------------
+🚀 USAGE OPTIONS
+--------------------------------------------------------------------------------
+
+OPTION 1: One-Time Sync (Recommended for Demo)
+----------------------------------------------
+Fetch fresh data once before your demo:
+
+    python sync_realtime_data.py
+
+This will:
+✓ Fetch latest data from all 4 sources
+✓ Update your local database
+✓ Take 30-60 seconds
+✓ Give you real data for the demo
+
+Then upload the updated database to SnowLeopard.
+
+
+OPTION 2: Sync on Backend Startup
+----------------------------------
+Enable automatic sync when backend starts:
+
+1. Edit .env file:
+   SYNC_REALTIME_DATA=true
+
+2. Start backend:
+   python backend/main_integrated.py
+
+The backend will:
+✓ Sync data automatically at startup
+✓ Take 30-60 seconds to start
+✓ Use fresh data for all queries
+
+
+OPTION 3: Manual Sync Script
+-----------------------------
+Run the sync service directly:
+
+    python -c "from backend.services.realtime_sync import RealtimeDataSync; RealtimeDataSync().sync_all()"
+
+--------------------------------------------------------------------------------
+⚙️ CONFIGURATION
+--------------------------------------------------------------------------------
+
+Environment Variables (.env):
+
+# Enable/disable real-time sync on startup
+SYNC_REALTIME_DATA=false    # Set to 'true' to enable
+
+# Your SnowLeopard credentials
+SNOWLEOPARD_API_KEY=your_key_here
+SNOWLEOPARD_DATAFILE_ID=your_datafile_id_here
+
+--------------------------------------------------------------------------------
+📋 WORKFLOW FOR DEMO
+--------------------------------------------------------------------------------
+
+RECOMMENDED: Sync Once Before Demo
+-----------------------------------
+
+1. Before demo, run:
+   python sync_realtime_data.py
+
+2. Upload updated database:
+   - File: database/citypulse.db
+   - Upload to SnowLeopard Playground
+   - Get new datafile ID
+
+3. Update .env:
+   SNOWLEOPARD_DATAFILE_ID=new_id_here
+
+4. Start backend:
+   python backend/main_integrated.py
+
+5. Demo with real, fresh data! 🎉
+
+--------------------------------------------------------------------------------
+🔍 WHAT GETS SYNCED
+--------------------------------------------------------------------------------
+
+Police Incidents:
+- Last 24 hours
+- Includes: incident type, location, time, neighborhood
+- Replaces old data with fresh incidents
+
+Fire/EMS Calls:
+- Last 24 hours
+- Includes: call type, location, time, neighborhood
+- Replaces old data with fresh calls
+
+311 Cases:
+- Last 7 days
+- Includes: case type, status, location, neighborhood
+- Replaces old data with recent cases
+
+Earthquakes:
+- Last 24 hours within 100km of SF
+- Includes: magnitude, location, time, depth
+- Adds to disaster events table
+
+--------------------------------------------------------------------------------
+⚡ PERFORMANCE
+--------------------------------------------------------------------------------
+
+Sync Times:
+- Police: ~10-15 seconds (up to 1000 records)
+- Fire/EMS: ~10-15 seconds (up to 1000 records)
+- 311 Cases: ~10-15 seconds (up to 1000 records)
+- Earthquakes: ~5 seconds (typically 0-10 events)
+- Total: ~30-60 seconds for full sync
+
+Network Requirements:
+- Internet connection required
+- APIs are public (no auth needed)
+- Rate limits: generous for demo use
+
+--------------------------------------------------------------------------------
+🎯 BENEFITS
+--------------------------------------------------------------------------------
+
+✓ Real Data: Actual incidents from SF right now
+✓ Credibility: Show live data in your demo
+✓ Accuracy: Current emergency patterns
+✓ Freshness: Data from last 24 hours
+✓ Simple: One command to sync everything
+
+--------------------------------------------------------------------------------
+🛠️ TROUBLESHOOTING
+--------------------------------------------------------------------------------
+
+If sync fails:
+1. Check internet connection
+2. Verify APIs are accessible:
+   curl https://data.sfgov.org/resource/wg3w-h783.json?$limit=1
+3. Continue with sample data (system will warn but continue)
+
+If data looks wrong:
+1. Check sync logs for errors
+2. Verify database has data:
+   sqlite3 database/citypulse.db "SELECT COUNT(*) FROM sf_police_calls_rt;"
+3. Re-run sync if needed
+
+--------------------------------------------------------------------------------
+📦 DEPENDENCIES
+--------------------------------------------------------------------------------
+
+Required packages (already in requirements.txt):
+- requests (for API calls)
+- schedule (for periodic sync)
+
+Install with:
+    pip install -r backend/requirements.txt
+
+--------------------------------------------------------------------------------
+✅ READY TO USE
+--------------------------------------------------------------------------------
+
+Your system is now configured for real-time data!
+
+Quick Start:
+1. python sync_realtime_data.py
+2. Upload database to SnowLeopard
+3. Update datafile ID in .env
+4. python backend/main_integrated.py
+5. Demo with real data! 🚀
+
+================================================================================
