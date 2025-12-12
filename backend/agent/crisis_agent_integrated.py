@@ -91,17 +91,25 @@ class CityPulseAgent:
         # Add source information to results
         sql_result["source"] = getattr(self.snowleopard, 'get_mode', lambda: 'unknown')()
         
-        # Step 4: Execute SQL
-        try:
-            raw_data = self._execute_sql(sql_result["sql"])
-        except Exception as e:
-            # Step 4b: Retry with corrected SQL if needed
-            return {
-                "error": f"SQL execution failed: {str(e)}",
-                "sql_used": sql_result["sql"],
-                "source": sql_result.get("source", "unknown"),
-                "suggestion": "Please rephrase your question or check database contents"
-            }
+        # Step 4: Use SnowLeopard's solution if available, otherwise execute locally
+        if sql_result.get("has_solution") and sql_result.get("data"):
+            # Use SnowLeopard's complete solution
+            raw_data = sql_result["data"]
+            sql_source = f"{sql_result['source']} (with solution)"
+            print(f"✅ Using SnowLeopard's complete solution: {len(raw_data)} rows")
+        else:
+            # Execute SQL locally (fallback)
+            try:
+                raw_data = self._execute_sql(sql_result["sql"])
+                sql_source = sql_result.get("source", "unknown")
+            except Exception as e:
+                # Step 4b: Retry with corrected SQL if needed
+                return {
+                    "error": f"SQL execution failed: {str(e)}",
+                    "sql_used": sql_result["sql"],
+                    "source": sql_result.get("source", "unknown"),
+                    "suggestion": "Please rephrase your question or check database contents"
+                }
         
         # Step 5: Compute scores and analyze
         analysis = self._analyze_results(raw_data, intent)
@@ -120,8 +128,10 @@ class CityPulseAgent:
             "insight_summary": insights,
             "map_layers": map_layers,
             "sql_used": sql_result["sql"],
-            "sql_source": sql_result.get("source", "unknown"),
+            "sql_source": sql_source,  # Use enhanced source info
             "sql_explanation": sql_result.get("explanation", ""),
+            "technical_details": sql_result.get("technical_details", ""),
+            "snowleopard_solution": sql_result.get("has_solution", False),
             "raw_rows": raw_data[:20]  # Limit to first 20 rows
         }
     

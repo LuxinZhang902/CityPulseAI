@@ -51,6 +51,8 @@ class QueryResponse(BaseModel):
     sql_used: str
     sql_source: str
     sql_explanation: str
+    technical_details: str = ""
+    snowleopard_solution: bool = False
     raw_rows: list
 
 class ModeRequest(BaseModel):
