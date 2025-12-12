@@ -48,7 +48,9 @@ CREATE TABLE IF NOT EXISTS sf_shelter_waitlist (
     snapshot_date TEXT NOT NULL,
     neighborhood TEXT,
     people_waiting INTEGER,
-    shelter_type TEXT
+    shelter_type TEXT,
+    latitude REAL,
+    longitude REAL
 );
 
 -- Baseline unhoused population counts
@@ -56,7 +58,9 @@ CREATE TABLE IF NOT EXISTS sf_homeless_baseline (
     neighborhood TEXT PRIMARY KEY,
     unsheltered_count INTEGER,
     sheltered_count INTEGER,
-    snapshot_year INTEGER
+    snapshot_year INTEGER,
+    latitude REAL,
+    longitude REAL
 );
 
 -- Unified disaster events (Fire + Hazmat + Earthquake)

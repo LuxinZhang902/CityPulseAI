@@ -1,15 +1,21 @@
 """FastAPI backend for CityPulse AI - Integrated with SnowLeopard Playground."""
+from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from pathlib import Path
+from fastapi.responses import FileResponse
+from typing import Dict, Any, Optional
+import uvicorn
 import os
-from dotenv import load_dotenv
+from datetime import datetime
+from pathlib import Path
+import dotenv
 
 # Load environment variables
-load_dotenv()
+dotenv.load_dotenv()
 
+# Import our integrated agent
 from agent.crisis_agent_integrated import CityPulseAgent
+from services.pdf_generator import pdf_generator
 
 app = FastAPI(
     title="CityPulse AI - Integrated",
@@ -30,7 +36,7 @@ app.add_middleware(
 DB_PATH = Path(__file__).parent.parent / "database" / "citypulse.db"
 SNOWLEOPARD_API_KEY = os.getenv("SNOWLEOPARD_API_KEY")
 USE_PLAYGROUND = os.getenv("USE_PLAYGROUND", "true").lower() == "true"
-DATAFILE_ID = os.getenv("SNOWLEOPARD_DATAFILE_ID", "5baf5ba1d4344af3ba0a56d6869f3352")
+DATAFILE_ID = os.getenv("SNOWLEOPARD_DATAFILE_ID", "b608c4da75b2402a9c4a7a7138ef692f")
 
 agent = CityPulseAgent(
     db_path=str(DB_PATH),
@@ -43,17 +49,25 @@ class QueryRequest(BaseModel):
     question: str
 
 class QueryResponse(BaseModel):
+    query: str
     analysis_type: str
-    timestamp: str
-    top_neighborhoods: list
+    intent: Dict[str, str]
     insight_summary: str
-    map_layers: dict
-    sql_used: str
-    sql_source: str
-    sql_explanation: str
-    technical_details: str = ""
-    snowleopard_solution: bool = False
+    key_insights: list
+    risk_level: Optional[str] = None
+    recommendations: Optional[list] = None
+    top_neighborhoods: list
     raw_rows: list
+    sql_used: str
+    sql_explanation: str
+    sql_source: str
+    map_layers: Dict[str, Any]
+    chart_data: Optional[Dict[str, Any]] = None
+    confidence: float
+    snowleopard_solution: bool
+    technical_details: Optional[str] = None
+    comprehensive_analysis: Optional[Dict[str, Any]] = None
+    timestamp: str
 
 class ModeRequest(BaseModel):
     mode: str  # "playground" or "direct"
@@ -110,6 +124,29 @@ async def get_status():
 async def get_schema():
     """Get database schema information."""
     return agent.schema
+
+@app.post("/api/generate-pdf")
+async def generate_pdf_report(request: QueryRequest):
+    """Generate a comprehensive PDF report for the analysis."""
+    try:
+        # First, get the analysis data
+        result = agent.analyze(request.question)
+        
+        if "error" in result:
+            raise HTTPException(status_code=500, detail=result["error"])
+        
+        # Generate PDF report
+        pdf_path = pdf_generator.generate_report(result)
+        
+        # Return the PDF file
+        return FileResponse(
+            pdf_path,
+            media_type="application/pdf",
+            filename=os.path.basename(pdf_path)
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
 
 @app.get("/api/health")
 async def health_check():

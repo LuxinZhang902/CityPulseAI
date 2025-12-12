@@ -11,7 +11,7 @@ if [ -f ".env" ]; then
         echo "" >> .env
         echo "# SnowLeopard Playground Settings" >> .env
         echo "USE_PLAYGROUND=true" >> .env
-        echo "SNOWLEOPARD_DATAFILE_ID=5baf5ba1d4344af3ba0a56d6869f3352" >> .env
+        echo "SNOWLEOPARD_DATAFILE_ID=b608c4da75b2402a9c4a7a7138ef692f" >> .env
         echo "✅ Added Playground settings to .env"
     fi
 else
@@ -22,7 +22,7 @@ SNOWLEOPARD_API_KEY=your_snowleopard_api_key_here
 
 # SnowLeopard Playground Settings
 USE_PLAYGROUND=true
-SNOWLEOPARD_DATAFILE_ID=5baf5ba1d4344af3ba0a56d6869f3352
+SNOWLEOPARD_DATAFILE_ID=b608c4da75b2402a9c4a7a7138ef692f
 
 # Google Maps API Key (for frontend)
 REACT_APP_GOOGLE_MAPS_API_KEY=AIzaSyD__jUwZNYttgXi5VPcpMW1xHa7_Ea4jEY

@@ -166,7 +166,7 @@ def generate_311_cases(conn, count=400):
     conn.commit()
     print(f"✓ Generated {count} 311 cases")
 
-def generate_shelter_data(conn):
+def generate_shelter_waitlist(conn):
     """Generate shelter waitlist data."""
     cursor = conn.cursor()
     now = datetime.now()
@@ -179,16 +179,23 @@ def generate_shelter_data(conn):
             base_waiting = 50 if neighborhood in ["Tenderloin", "SoMa"] else 10
             people_waiting = base_waiting + random.randint(-5, 15)
             
+            # Get coordinates for neighborhood
+            lat, lon = NEIGHBORHOOD_COORDS[neighborhood]
+            lat += random.uniform(-0.005, 0.005)
+            lon += random.uniform(-0.005, 0.005)
+            
             cursor.execute("""
                 INSERT INTO sf_shelter_waitlist
-                (record_id, snapshot_date, neighborhood, people_waiting, shelter_type)
-                VALUES (?, ?, ?, ?, ?)
+                (record_id, snapshot_date, neighborhood, people_waiting, shelter_type, latitude, longitude)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (
                 f"SW{record_id:06d}",
                 date.date().isoformat(),
                 neighborhood,
                 people_waiting,
-                random.choice(["Emergency", "Transitional", "Navigation Center"])
+                random.choice(["Emergency", "Transitional", "Navigation Center"]),
+                lat,
+                lon
             ))
             record_id += 1
     
@@ -208,11 +215,14 @@ def generate_homeless_baseline(conn):
             unsheltered = random.randint(20, 100)
             sheltered = random.randint(10, 50)
         
+        # Get coordinates for neighborhood
+        lat, lon = NEIGHBORHOOD_COORDS[neighborhood]
+        
         cursor.execute("""
             INSERT INTO sf_homeless_baseline
-            (neighborhood, unsheltered_count, sheltered_count, snapshot_year)
-            VALUES (?, ?, ?, ?)
-        """, (neighborhood, unsheltered, sheltered, 2024))
+            (neighborhood, unsheltered_count, sheltered_count, snapshot_year, latitude, longitude)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (neighborhood, unsheltered, sheltered, 2024, lat, lon))
     
     conn.commit()
     print(f"✓ Generated homeless baseline data")
@@ -291,7 +301,7 @@ def main():
     generate_police_calls(conn, 500)
     generate_fire_calls(conn, 300)
     generate_311_cases(conn, 400)
-    generate_shelter_data(conn)
+    generate_shelter_waitlist(conn)
     generate_homeless_baseline(conn)
     generate_disaster_events(conn, 50)
     generate_neighborhoods(conn)

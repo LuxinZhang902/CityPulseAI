@@ -21,7 +21,7 @@ def test_integration():
     agent = CityPulseAgent(
         db_path="database/citypulse.db",
         use_playground=True,
-        datafile_id="5baf5ba1d4344af3ba0a56d6869f3352"
+        datafile_id="b608c4da75b2402a9c4a7a7138ef692f"
     )
     
     # Show status
