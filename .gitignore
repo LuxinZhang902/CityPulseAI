@@ -62,6 +62,6 @@ logs/
 .DS_Store
 Thumbs.db
 
-
-ARCHITECTURE_DIAGRAM.md
+# Documentation (exclude all .md except README.md)
 *.md
+!README.md
