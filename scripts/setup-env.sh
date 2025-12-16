@@ -10,9 +10,6 @@ cat > .env << 'EOF'
 # This is your BYO LLM-API key for SQL generation
 SNOWLEOPARD_API_KEY=your_snowleopard_api_key_here
 
-# Google Maps API Key (for frontend visualization)
-REACT_APP_GOOGLE_MAPS_API_KEY=AIzaSyD__jUwZNYttgXi5VPcpMW1xHa7_Ea4jEY
-
 # Backend API URL (for frontend)
 REACT_APP_API_URL=http://localhost:8000
 EOF

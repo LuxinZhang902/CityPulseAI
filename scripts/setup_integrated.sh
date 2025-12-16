@@ -24,9 +24,6 @@ SNOWLEOPARD_API_KEY=your_snowleopard_api_key_here
 USE_PLAYGROUND=true
 SNOWLEOPARD_DATAFILE_ID=793f36afcd494309963477d7e7f4075b
 
-# Google Maps API Key (for frontend)
-REACT_APP_GOOGLE_MAPS_API_KEY=AIzaSyD__jUwZNYttgXi5VPcpMW1xHa7_Ea4jEY
-
 # Backend API URL (for frontend)
 REACT_APP_API_URL=http://localhost:8000
 EOF
